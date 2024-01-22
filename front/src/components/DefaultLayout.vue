@@ -105,9 +105,11 @@ import {useRouter} from "vue-router";
 const store = useStore();
 const router = useRouter();
 
-function logout(){
-  store.commit('logout');
-  router.push({name:'Login'})
+function logout() {
+  store.dispatch('logout')
+      .then(() => {
+        router.push({name: 'Login'})
+      });
 }
 
 const user = computed(() => store.state.user.data)
@@ -118,11 +120,6 @@ const navigation = [
 
 </script>
 
-<script>
-export default {
-  name: "Dashboard"
-}
-</script>
 
 <style lang="scss" scoped>
 
