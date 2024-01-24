@@ -15,11 +15,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum',)->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
     Route::post('/logout', [AuthController::class, 'logout']);
+});
+
+Route::middleware('admin')->group(function () {
+    Route::get('/route', function (){return response(['mysds'=>2]);});
 });
 
 Route::post('/register', [AuthController::class, 'register']);
