@@ -4,9 +4,10 @@ import axiosClient from "../axios.js";
 const store = createStore({
     state: {
         user: {
-            data: {},
+            data: JSON.parse(sessionStorage.getItem('USER')),
             token: sessionStorage.getItem('TOKEN'),
         },
+        statistics: null
     },
     getters: {},
     actions: {
@@ -28,18 +29,30 @@ const store = createStore({
                 commit('setUser',data)
                 return data;
             })
+        },
+        statistics({commit}, filterParams) {
+            return axiosClient.post('/statisticsforthemonth',filterParams).then(({data})=>{
+                commit('setStatistics',data)
+                return data;
+            })
         }
     },
     mutations: {
         logout: (state) => {
             state.user.data = {};
             state.user.token = null;
+            sessionStorage.removeItem('USER');
             sessionStorage.removeItem('TOKEN');
         },
         setUser: (state, userData)=>{
             state.user.token = userData.token;
             state.user.data = userData.user;
+            sessionStorage.setItem('USER',  JSON.stringify({name: userData.user}));
             sessionStorage.setItem('TOKEN', userData.token);
+        },
+        setStatistics: (state, statisticsData)=>{
+            state.statistics = statisticsData;
+
         }
 
     },

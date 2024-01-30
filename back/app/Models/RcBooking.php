@@ -17,6 +17,8 @@ class RcBooking extends Model
             ->with('carWithModel');
     }
     public static function getYears(){
-        return RcBooking::selectRaw('YEAR(created_at) as year')->distinct()->get();
+        $objects = json_decode(RcBooking::selectRaw('YEAR(created_at) as year')->distinct()->get());
+        $years = array_column($objects, 'year');
+        return $years;
     }
 }

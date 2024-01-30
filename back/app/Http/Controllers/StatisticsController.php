@@ -14,17 +14,17 @@ class StatisticsController extends Controller
 {
     //
 
-    function getFilteringData(Request $request)
+    function statisticsForTheMonth(Request $request)
     {
 //        return ((new DateTime())->format('H:i:s'));
         $year = $request->input()['year'];
         $month = $request->input()['month'];
 
         $years = $this->getYears();
-        $years = array_column($this->getYears()->toArray(), 'year');
+
 //        return $years;
-        if(!in_array($year, $years) || $month<1 || $month>12)
-            return response(['message'=>'Incorrect period'],400);
+        if (!in_array($year, $years) || $month < 1 || $month > 12)
+            return response(['message' => 'Incorrect period'], 400);
 
         $startMonthDate = $year . '-' . $month . '-01 00:00:00';
         $endMonthDate = $year . '-' . $month . '-' . cal_days_in_month(CAL_GREGORIAN, $month, $year) . ' 23:59:59';
@@ -83,6 +83,7 @@ class StatisticsController extends Controller
         $freeTimeEnd = $ninePM;
         $isService = false;
         foreach ($periods as $period) {
+
             $startPeriod = new DateTime($period[0]);
             $endPeriod = new DateTime($period[1]);
 
@@ -165,7 +166,12 @@ class StatisticsController extends Controller
 
         foreach ($daysArr as $day => $dayValue) {
             $currentDate = (new DateTime($startDate))->modify("+" . $day - 1 . "day")->format('Y-m-d H:i:s');
-            $daysArr[$day] = $this->isCarFree($currentDate, $schedule);
+            if (isset($schedule[0])) {
+                //Для скорочення обрахунків видаляємо непотрібні періоди
+                if ($schedule[0][1] < $currentDate)
+                    array_shift($schedule);
+                $daysArr[$day] = $this->isCarFree($currentDate, $schedule);
+            }
         }
 
         $resultData = ['free' => 0, 'service' => 0, 'busy' => 0, 'days' => 0];

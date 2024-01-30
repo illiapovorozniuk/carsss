@@ -12,7 +12,7 @@
               <div class="ml-10 flex items-baseline space-x-4">
                 <router-link v-for="item in navigation" :key="item.name" :to="item.to"
                              active-class=""
-                             :class="[this.$route.name=== item.name? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white', 'block rounded-md px-3 py-2 text-base font-medium']"
+                             :class="[$route.name=== item.name? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white', 'block rounded-md px-3 py-2 text-base font-medium']"
                 >{{ item.name }}
                 </router-link>
               </div>
@@ -46,7 +46,22 @@
                       class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <MenuItem v-slot="{ active }">
                       <a @click="logout"
-                         :class="[ 'block px-4 py-2 text-sm text-gray-700 cursor-pointer']">Sign out</a>
+                         :class="[ 'block px-4 py-2 text-sm text-gray-700 cursor-pointer flex']">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="1.5"
+                          stroke="currentColor"
+                          class="w-6 h-6 text-gray-700"
+                      >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
+                        />
+                      </svg>
+                        Sign out</a>
                     </MenuItem>
                   </MenuItems>
                 </transition>
@@ -70,7 +85,7 @@
         <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
           <router-link v-for="item in navigation" :key="item.name" :to="item.to"
                        active-class=""
-                       :class="[this.$route.name=== item.name? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white', 'block rounded-md px-3 py-2 text-base font-medium']"
+                       :class="[$route.name=== item.name? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white', 'block rounded-md px-3 py-2 text-base font-medium']"
           >{{ item.name }}
           </router-link>
         </div>
@@ -86,8 +101,23 @@
 
           </div>
           <div class="mt-3 space-y-1 px-2">
+
             <DisclosureButton as="a" @click="logout"
-                              class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 cursor-pointer hover:text-white">
+                              class=" flex block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 cursor-pointer hover:text-white">
+              <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-6 h-6 text-gray-400"
+              >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
+                />
+              </svg>
               Sign out
             </DisclosureButton>
           </div>
@@ -117,6 +147,7 @@ function logout() {
 }
 
 const user = computed(() => store.state.user.data)
+
 const navigation = [
   {name: 'Dashboard', to: {name: 'Dashboard'}, current: false},
   {name: 'Surveys', to: {name: 'Surveys'}, current: false},
