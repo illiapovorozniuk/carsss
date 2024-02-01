@@ -1,41 +1,113 @@
+<template>
+  <PageComponent title="Rent a car">
+    <form @submit.prevent="getCars">
+
+      <div class="space-y-2">
+
+        <h2 class="text-base font-semibold leading-7 text-gray-900">Search a free</h2>
+        <ErrorMSG :error-msg="errorMsg"></ErrorMSG>
+        <div class="border-b border-gray-900/10 pb-12 flex justify-center">
+
+          <div class="flex content-center mr-6">
+            <div class="mt-2 grid grid-cols-1 gap-x-6 gap-y-8 mr-4">
+
+              <div class="w-64">
+                <label for="datetime" class="block text-sm font-medium text-gray-700">Select the start of the
+                  rent</label>
+                <input
+                    v-model="startDatetime"
+                    type="datetime-local"
+                    class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
+                    placeholder="Select Date and Time"
+                />
+              </div>
+
+            </div>
+            <div class="mt-2 grid grid-cols-1 gap-x-6 gap-y-8">
+              <div class="w-64">
+                <label for="datetime" class="block text-sm font-medium text-gray-700">Select the end of the
+                  rent</label>
+                <input
+                    v-model="endDatetime"
+                    type="datetime-local"
+                    class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
+                    placeholder="Select Date and Time"
+                />
+              </div>
+            </div>
+
+          </div>
+          <button type="submit"
+                  class="rounded-md bg-indigo-600 px-3 py-3 mt-auto text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            SEARCH
+          </button>
+        </div>
+
+
+      </div>
+<CarsTable :tableData="cars"></CarsTable>
+
+    </form>
+  </PageComponent>
+</template>
+
 <script setup>
 
 import PageComponent from "../components/PageComponent.vue";
 
+import ErrorMSG from "../components/ErrorMSG.vue";
+import CarsTable from "../components/CarsTable.vue";
 </script>
+<script>
+import {ref} from "vue";
+import axiosClient from "../axios.js";
+  let startDatetime= '';
+  let endDatetime= '';
 
-<template>
-  <PageComponent title = "Rent a car">
-    <form>
-      <div class="space-y-12">
-        <div class="border-b border-gray-900/10 pb-12">
-          <h2 class="text-base font-semibold leading-7 text-gray-900">Profile</h2>
-
-          <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div class="sm:col-span-3">
-              <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country</label>
-              <div class="mt-2">
-                <select id="country" name="country" autocomplete="country-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-                  <option>United States</option>
-                  <option>Canada</option>
-                  <option>Mexico</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
+const errorMsg = ref('');
+const handleSubmit = () => {
+  axiosClient.post('/rent/searchfreecars',{start_date_time:startDatetime,end_date_time:endDatetime}).then(
+      data=>{console.log(data.data)}
+  ).catch(err => {
+    errorMsg.value = err.response.data.error
+    console.log(errorMsg.value)
+      }
+  )
+  console.log("Start Date:", startDatetime);
+  console.log("End Date:", endDatetime);
+};
 
 
-        <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
-      </div>
+export default {
+  data() {
+    return {
+      month: 1,
+      statistics: [],
+      cars:[],
+    };
+  },
+  methods: {
 
-      <div class="mt-6 flex items-center justify-end gap-x-6">
-        <button type="button" class="text-sm font-semibold leading-6 text-gray-900">Cancel</button>
+    async getCars() {
+      axiosClient.post('/rent/searchfreecars',{start_date_time:startDatetime,end_date_time:endDatetime}).then(
+          (data)=>{this.cars = data.data;
+          console.log(data.data)
+          }
+      )
+    },
 
-      </div>
-    </form></PageComponent>
-</template>
+  },
+  watch: {
+    year(newYear) {
+      this.getStatistics(newYear, this.month);
+    },
+    month(newMonth) {
+      this.getStatistics(this.year, newMonth);
+    }
+  },
 
+};
+</script>
 <style scoped lang="scss">
 
 </style>

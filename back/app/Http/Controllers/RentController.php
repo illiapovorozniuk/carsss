@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\RcBooking;
 use App\Models\RcCar;
+use DateTime;
 use Illuminate\Http\Request;
 
 class RentController extends Controller
@@ -11,10 +12,16 @@ class RentController extends Controller
     //
     public function searchFreeCars(Request $request)
     {
-        $start_date = $request->input(['start_date']) . ' 00:00:00';
-        $end_date = $request->input(['end_date']) . ' 00:00:00';
+        $start_date = $request->input(['start_date_time']);
+        $end_date = $request->input(['end_date_time']);
 
-        $companyCars = RcCar::select('car_id', 'car_model_id', 'attribute_year','attribute_transmission')->where([
+        if (new DateTime() >= new DateTime($start_date) || $start_date>=$end_date){
+            return response([
+                'error' => 'The provided time is incorrect'
+
+            ], 400);
+        }
+        $companyCars = RcCar::select('car_id', 'car_model_id', 'attribute_year', 'attribute_transmission')->where([
             ['status', '=', 1],
             ['company_id', '=', 1],
             ['is_deleted', '!=', 1],
