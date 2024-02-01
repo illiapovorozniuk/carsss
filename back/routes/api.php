@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RentController;
 use App\Http\Controllers\StatisticsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,11 +22,14 @@ Route::middleware('auth:sanctum',)->group(function () {
         return $request->user();
     });
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::prefix('rent')->group(function () {
+        Route::post('/searchfreecars', [RentController::class, 'searchFreeCars']);
+    });
 });
 
-Route::middleware([ 'auth:sanctum','admin'])->group(function (){
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::post('/statisticsforthemonth', [StatisticsController::class, 'statisticsForTheMonth']);
-    Route::get('/getyears',[StatisticsController::class,'getYears']);
+    Route::get('/getyears', [StatisticsController::class, 'getYears']);
 });
 
 Route::post('/register', [AuthController::class, 'register']);

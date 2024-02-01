@@ -15,4 +15,10 @@ class RcCarsModel extends Model
         hasOne(RcCarsBrand::class, 'car_brand_id','car_brand_id')->
         select('car_brand_id','slug');
     }
+    public function carWithModelTranslation()
+    {
+        return $this->hasMany(RcCarsModelsTranslation::class, 'car_model_id', 'car_model_id',)
+            ->select('car_model_id', 'name')
+            ->where('lang','=','en');
+    }
 }

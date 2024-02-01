@@ -3,18 +3,19 @@ import Dashboard from "../views/Dashboard.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import DefaultLayout from "../components/DefaultLayout.vue";
-import Surveys from "../views/Surveys.vue";
+
 import store from "../store/index.js";
 import AuthLayout from "../components/AuthLayout.vue";
 import AdminLayout from "../components/AdminLayout.vue";
 import Statistics from "../views/Statistics.vue";
+import Rent from "../views/Rent.vue";
 
 const routes = [
     {
         path: "/", redirect: "dashboard", name: "Dashboard", component: DefaultLayout, meta: {isUser: true, requiresAuth: true},
         children: [
             {path: "/dashboard", name: "Dashboard", component: Dashboard, meta: {isUser: true, requiresAuth: true} },
-            {path: "/surveys", name: "Surveys", component: Surveys, meta: {isUser: true, requiresAuth: true}}
+            {path: "/rent", name: "Rent", component: Rent, meta: {isUser: true, requiresAuth: true} },
         ],
     },
     {

@@ -17,4 +17,10 @@ class RcCar extends Model
             ->select('car_model_id', 'car_brand_id', 'slug', 'attribute_interior_color')
             ->with('modelWithBrand');
     }
+    public function carWithModelTranslation()
+    {
+        return $this->hasMany(RcCarsModelsTranslation::class, 'car_model_id', 'car_model_id')
+            ->select('car_model_id', 'name')
+            ->where('lang','=','en');
+    }
 }

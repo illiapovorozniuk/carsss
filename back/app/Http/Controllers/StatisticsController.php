@@ -16,7 +16,6 @@ class StatisticsController extends Controller
 
     function statisticsForTheMonth(Request $request)
     {
-//        return ((new DateTime())->format('H:i:s'));
         $year = $request->input()['year'];
         $month = $request->input()['month'];
 
@@ -28,12 +27,10 @@ class StatisticsController extends Controller
 
         $startMonthDate = $year . '-' . $month . '-01 00:00:00';
         $endMonthDate = $year . '-' . $month . '-' . cal_days_in_month(CAL_GREGORIAN, $month, $year) . ' 23:59:59';
-//        cal_days_in_month(CAL_GREGORIAN, $month, $year)
-        $necessaryCondition = [['status', '!=', 0]];
         $bookings = RcBooking::select('booking_id', 'car_id', 'created_at', 'start_date', 'end_date', 'source')
             ->where([
                 ['end_date', '>=', $startMonthDate],
-                ['start_date', '<', (new DateTime($endMonthDate))->modify('+1 day')->format('Y-m-d') . ' 00:00:00'],
+                ['start_date', '<=', (new DateTime($endMonthDate))->modify('+1 day')->format('Y-m-d') . ' 00:00:00'],
                 ['status', '=', 1]
             ])
             ->with('bookingWithCar')
@@ -55,7 +52,7 @@ class StatisticsController extends Controller
                             Carbon::parse($booking['end_date'])->format("Y-m-d H:i:s"), $booking['source']]],
                         'registration_number' => $booking['bookingWithCar']['registration_number'],
                         'car_slug' => $booking['bookingWithCar']['carWithModel']['slug'],
-                        'car_created_at' => date_format($booking['bookingWithCar']['created_at'], 'Y-m-d'),
+                        'attribute_year' => $booking['bookingWithCar']['attribute_year'],
                         'color' => $booking['bookingWithCar']['carWithModel']['attribute_interior_color'],
                         'brand_slug' => $booking['bookingWithCar']['carWithModel']['modelWithBrand']['slug'],
                     ];

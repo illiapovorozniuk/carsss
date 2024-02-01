@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('rc_cars', function (Blueprint $table) {
             $table->id('car_id');
-            $table->integer('car_model_id')->nullable()->default(null);
+            $table->integer('car_model_id')->default(1);
             $table->integer('car_serie_id')->nullable()->default(null);
             $table->integer('car_body_id')->nullable()->default(null);
             $table->integer('company_id')->nullable()->default(null);

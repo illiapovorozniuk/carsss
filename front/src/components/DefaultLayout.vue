@@ -150,7 +150,8 @@ const user = computed(() => store.state.user.data)
 
 const navigation = [
   {name: 'Dashboard', to: {name: 'Dashboard'}, current: false},
-  {name: 'Surveys', to: {name: 'Surveys'}, current: false},
+  {name: 'Rent', to: {name: 'Rent'}, current: false},
+
 ]
 
 </script>

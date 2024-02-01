@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class RcCarsModelsTranslation extends Model
 {
     use HasFactory;
+    protected $fillable  = ['car_model_id', 'en', 'name'];
 }

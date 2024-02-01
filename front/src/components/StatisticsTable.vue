@@ -8,6 +8,7 @@
             <tr>
               <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Car id</th>
               <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Registration number</th>
+              <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Year</th>
               <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Brand</th>
               <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Car slug</th>
               <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Color</th>
@@ -24,13 +25,12 @@
                   car_row.registration_number
                 }}
               </td>
+              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">{{ car_row.attribute_year }}</td>
               <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">{{ car_row.brand_slug }}</td>
               <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">{{ car_row.car_slug }}</td>
               <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">{{ car_row.color }}</td>
               <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">{{ car_row.schedule.free }}</td>
-              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">{{
-                  car_row.schedule.service
-                }}
+              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">{{ car_row.schedule.service }}
               </td>
               <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">{{ car_row.schedule.busy }}</td>
               <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">{{ car_row.schedule.days }}</td>
@@ -42,9 +42,11 @@
         </div>
       </div>
       <div class="flex items-center justify-center mt-4">
-        <div class="inline-block"> <Pagination :totalPages="totalPages"
-                                               :currentPage="currentPage"
-                                               @pageChanged="changePage"></Pagination></div>
+        <div class="inline-block">
+          <Pagination :totalPages="totalPages"
+                      :currentPage="currentPage"
+                      @pageChanged="changePage"></Pagination>
+        </div>
       </div>
     </div>
   </div>
@@ -52,8 +54,9 @@
 
 <script>
 import Pagination from "./Pagination.vue";
+
 export default {
-  components: { Pagination },
+  components: {Pagination},
   props: ["tableData"],
   data() {
     return {
@@ -70,6 +73,11 @@ export default {
     totalPages() {
       return Math.ceil(this.tableData.length / this.itemsPerPage);
     },
+  },
+  watch:{
+    tableData(){
+      this.currentPage =1;
+    }
   },
   methods: {
     changePage(newPage) {

@@ -13,17 +13,17 @@ return new class extends Migration
     {
         Schema::create('rc_cars_models_translations', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('car_model_id');
+            $table->integer('car_model_id');
             $table->string('lang')->default('en');
             $table->string('name')->nullable()->default(null);
             $table->string('page_title')->nullable()->default(null);
             $table->string('page_meta_keywords')->nullable()->default(null);
             $table->string('page_meta_description')->nullable()->default(null);
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->string('footer_title')->nullable()->default(null);
-            $table->text('footer_description');
+            $table->text('footer_description')->nullable();
             $table->string('footer_subtitle')->nullable()->default(null);
-            $table->text('footer_subdescription');
+            $table->text('footer_subdescription')->nullable();
             $table->timestamps();
 
             $table->foreign('car_model_id')->references('car_model_id')->on('rc_cars_models')->onDelete('cascade');
