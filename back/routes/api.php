@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum',)->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::prefix('rent')->group(function () {
         Route::post('/searchfreecars', [RentController::class, 'searchFreeCars']);
+        Route::post('/createnewbooking', [RentController::class, 'createBooking']);
     });
 });
 

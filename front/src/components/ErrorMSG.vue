@@ -7,7 +7,7 @@ const props = defineProps({
 <template>
   <div v-if="errorMsg!==''" class="flex items-center justify-between py-3  px-5 bg-red-500 text-white rounded mx-auto ">
     {{ errorMsg }}
-    <span @click="errorMsg=''"
+    <span @click="closeError"
           class="w-8 h-8 flex items-center justify-center rounded-full transition-colors hover:bg-[rgba(0,0,0,0.2)]">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -17,6 +17,19 @@ const props = defineProps({
   </div>
 
 </template>
+
+<script>
+
+export default {
+
+  emits: ["close-error"],
+  methods:{
+    closeError(){
+      this.$emit('close-error');
+    }
+  }
+}
+</script>
 
 <style scoped lang="scss">
 

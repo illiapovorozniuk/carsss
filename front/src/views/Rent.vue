@@ -12,8 +12,7 @@
             <div class="mt-2 grid grid-cols-1 gap-x-6 gap-y-8 mr-4">
 
               <div class="w-64">
-                <label for="datetime" class="block text-sm font-medium text-gray-700">Select the start of the
-                  rent</label>
+                <label for="datetime" class="block text-sm font-medium text-gray-700">Pickup Date and Time</label>
                 <input
                     v-model="startDatetime"
                     type="datetime-local"
@@ -25,8 +24,7 @@
             </div>
             <div class="mt-2 grid grid-cols-1 gap-x-6 gap-y-8">
               <div class="w-64">
-                <label for="datetime" class="block text-sm font-medium text-gray-700">Select the end of the
-                  rent</label>
+                <label for="datetime" class="block text-sm font-medium text-gray-700">Return Date and Time</label>
                 <input
                     v-model="endDatetime"
                     type="datetime-local"
@@ -45,7 +43,9 @@
 
 
       </div>
-<CarsTable :tableData="cars"></CarsTable>
+      <CarsTable :tableData="cars"
+                 :start_datetime="startDatetime" :end_datetime="endDatetime" @refresh-table="getCars"></CarsTable>
+
 
     </form>
   </PageComponent>
@@ -61,21 +61,14 @@ import CarsTable from "../components/CarsTable.vue";
 <script>
 import {ref} from "vue";
 import axiosClient from "../axios.js";
-  let startDatetime= '';
-  let endDatetime= '';
+
+const now = new Date();
+now.setDate(now.getDate() + 1);
+let startDatetime = now.toISOString().slice(0, 16);
+now.setDate(now.getDate() + 4);
+let endDatetime = now.toISOString().slice(0, 16);
 
 const errorMsg = ref('');
-const handleSubmit = () => {
-  axiosClient.post('/rent/searchfreecars',{start_date_time:startDatetime,end_date_time:endDatetime}).then(
-      data=>{console.log(data.data)}
-  ).catch(err => {
-    errorMsg.value = err.response.data.error
-    console.log(errorMsg.value)
-      }
-  )
-  console.log("Start Date:", startDatetime);
-  console.log("End Date:", endDatetime);
-};
 
 
 export default {
@@ -83,15 +76,17 @@ export default {
     return {
       month: 1,
       statistics: [],
-      cars:[],
+      cars: [],
+      startDatetime: startDatetime,
+      endDatetime: endDatetime
     };
   },
   methods: {
 
     async getCars() {
-      axiosClient.post('/rent/searchfreecars',{start_date_time:startDatetime,end_date_time:endDatetime}).then(
-          (data)=>{this.cars = data.data;
-          console.log(data.data)
+      axiosClient.post('/rent/searchfreecars', {start_date_time: startDatetime, end_date_time: endDatetime}).then(
+          (data) => {
+            this.cars = data.data;
           }
       )
     },

@@ -7,7 +7,7 @@
 
   <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
     <form class="space-y-6" @submit="login" method="POST">
-      <ErrorMSG :error-msg="errorMsg"></ErrorMSG>
+      <ErrorMSG :error-msg="errorMsg" @close-error="CloseError"></ErrorMSG>
       <div>
         <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email address</label>
         <div class="mt-2">
@@ -58,7 +58,7 @@ const user = {
   password: ''
 }
 
-const errorMsg = ref('');
+
 
 function login(ev) {
   ev.preventDefault();
@@ -73,8 +73,18 @@ function login(ev) {
       }
   )
 }
+</script>
+<script>
+import {ref} from "vue";
+const errorMsg = ref('');
+export default {
 
-
+  methods:{
+    CloseError(){
+      errorMsg.value = '';
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

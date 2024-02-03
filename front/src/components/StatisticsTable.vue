@@ -43,9 +43,11 @@
       </div>
       <div class="flex items-center justify-center mt-4">
         <div class="inline-block">
-          <Pagination :totalPages="totalPages"
-                      :currentPage="currentPage"
-                      @pageChanged="changePage"></Pagination>
+          <Pagination
+              v-if="totalPages>=2"
+              :totalPages="totalPages"
+              :currentPage="currentPage"
+              @pageChanged="changePage"></Pagination>
         </div>
       </div>
     </div>
@@ -74,9 +76,9 @@ export default {
       return Math.ceil(this.tableData.length / this.itemsPerPage);
     },
   },
-  watch:{
-    tableData(){
-      this.currentPage =1;
+  watch: {
+    tableData() {
+      this.currentPage = 1;
     }
   },
   methods: {
