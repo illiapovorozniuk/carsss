@@ -40,7 +40,7 @@
                   enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75"
                   leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 ">
         <MenuItems
-            class="absolute right-0 z-10 mt-21 origin-top-right items-center rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            class="absolute  right-0 z-10 mt-21 origin-top-right items-center rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div class="py-1">
             <MenuItem @click="month=Month" v-for="Month in months" :key="Month.id" v-slot="{ active }">
               <a :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-5 py-1 text-sm']">{{
@@ -65,7 +65,7 @@
                   leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 ">
         <MenuItems
             class="absolute right-0 z-10 mt-21 origin-top-right items-center rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-          <div class="py-1">
+          <div class="py-1 max-h-52  overflow-y-auto">
             <MenuItem @click="brand=''"  v-slot="{ active }" class="bg-gray-100">
               <a :class="[active ? 'bg-gray-200 text-gray-900' : 'text-gray-700', 'block px-5 py-1 text-sm']">None</a>
             </MenuItem>

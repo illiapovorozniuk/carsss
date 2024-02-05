@@ -15,5 +15,4 @@ class RcCarsBrand extends Model
         $brands = array_column($objects, 'slug');
         return $brands;
     }
-
 }
