@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\RcBooking;
+use App\Models\RcCarsBrand;
 use Carbon\Carbon;
 use DateTime;
 use Faker\Core\Number;
@@ -16,8 +17,10 @@ class StatisticsController extends Controller
 
     function statisticsForTheMonth(Request $request)
     {
+
         $year = $request->input()['year'];
         $month = $request->input()['month'];
+        $brand= $request->input()['brand'];
 
         $years = $this->getYears();
 
@@ -27,12 +30,31 @@ class StatisticsController extends Controller
 
         $startMonthDate = $year . '-' . $month . '-01 00:00:00';
         $endMonthDate = $year . '-' . $month . '-' . cal_days_in_month(CAL_GREGORIAN, $month, $year) . ' 23:59:59';
+
+        $whereArr = [
+            ['end_date', '>=', $startMonthDate],
+            ['start_date', '<=', (new DateTime($endMonthDate))->modify('+1 day')->format('Y-m-d') . ' 00:00:00'],
+            ['status', '=', 1]
+        ];
+        if ($brand !== '') $whereArr[] = ['end_date', '>=', $startMonthDate];
+
         $bookings = RcBooking::select('booking_id', 'car_id', 'created_at', 'start_date', 'end_date', 'source')
             ->where([
                 ['end_date', '>=', $startMonthDate],
                 ['start_date', '<=', (new DateTime($endMonthDate))->modify('+1 day')->format('Y-m-d') . ' 00:00:00'],
                 ['status', '=', 1]
-            ])
+            ])->whereHas('car', function ($query) use($brand) {
+                $query->where('company_id', '=', 1)
+                    ->where('status', '=', 1)
+                    ->where('is_deleted', '!=', 1)
+                    ->whereHas('model', function ($query) use($brand){
+                        $query->when($brand!='',function($query) use ($brand) {
+                            $query->whereHas('brand', function ($query) use($brand){
+                                $query->where('slug','=',$brand);
+                            });
+                        });
+                    });
+            })
             ->with('bookingWithCar')
             ->get();
 
@@ -185,6 +207,11 @@ class StatisticsController extends Controller
     {
         $data = RcBooking::getYears();
         return $data;
+    }
+
+    function getBrands()
+    {
+        return RcCarsBrand::getBrands();
     }
 
 }

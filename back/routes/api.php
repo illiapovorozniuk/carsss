@@ -30,6 +30,8 @@ Route::middleware('auth:sanctum',)->group(function () {
 
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::post('/statisticsforthemonth', [StatisticsController::class, 'statisticsForTheMonth']);
+    Route::get('/getbrands', [StatisticsController::class, 'getBrands']);
+
     Route::get('/getyears', [StatisticsController::class, 'getYears']);
 });
 

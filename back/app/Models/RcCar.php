@@ -10,7 +10,10 @@ class RcCar extends Model
     use HasFactory;
 
     protected $fillable = ['car_id', 'car_model_id', 'registration_number', 'created_at'];
-
+    public function model()
+    {
+        return $this->belongsTo(RcCarsModel::class,'car_model_id','car_model_id');
+    }
     public function carWithModel()
     {
         return $this->hasOne(RcCarsModel::class, 'car_model_id', 'car_model_id')
