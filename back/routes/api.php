@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\RentController;
 use App\Http\Controllers\StatisticsController;
 use Illuminate\Http\Request;
@@ -25,6 +26,9 @@ Route::middleware('auth:sanctum',)->group(function () {
     Route::prefix('rent')->group(function () {
         Route::post('/searchfreecars', [RentController::class, 'searchFreeCars']);
         Route::post('/createnewbooking', [RentController::class, 'createBooking']);
+    });
+    Route::prefix('bookings')->group(function (){
+        Route::get('/get_bookings', [BookingController::class, 'getBookings']);
     });
 });
 

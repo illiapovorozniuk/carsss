@@ -4,8 +4,7 @@
 
       <div class="space-y-2">
 
-        <h2 class="text-base font-semibold leading-7 text-gray-900">Search a free</h2>
-        <ErrorMSG :error-msg="errorMsg"></ErrorMSG>
+        <ErrorMSG :error-msg="errorMsg" @close-error="CloseError"></ErrorMSG>
         <div class="border-b border-gray-900/10 pb-12 flex justify-center">
 
           <div class="flex content-center mr-6">
@@ -88,9 +87,14 @@ export default {
           (data) => {
             this.cars = data.data;
           }
+      ).catch(err => {
+            errorMsg.value = err.response.data.error
+          }
       )
     },
-
+    CloseError(){
+      errorMsg.value = '';
+    }
   },
   watch: {
     year(newYear) {
@@ -98,9 +102,12 @@ export default {
     },
     month(newMonth) {
       this.getStatistics(this.year, newMonth);
-    }
-  },
+    },
 
+  },
+  CloseError(){
+    errorMsg.value = '';
+  }
 };
 </script>
 <style scoped lang="scss">

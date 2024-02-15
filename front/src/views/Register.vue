@@ -81,7 +81,7 @@ function register(ev) {
   ev.preventDefault();
   store.dispatch('register', user)
       .then((res) => {
-        router.push({name: "Dashboard"})
+        router.push({name: "Bookings"})
       });
 
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class RcBooking extends Model
 {
@@ -19,6 +20,12 @@ class RcBooking extends Model
             ->where([['company_id', '=', 1],['status', '=', 1],['is_deleted', '!=', 1]])
             ->with('carWithModel');
     }
+    public function bookingWithCarTranslation(){
+        return $this->hasOne(RcCar::class,'car_id','car_id')
+            ->select('car_id','car_model_id', 'registration_number', 'attribute_year','is_deleted','status')
+            ->where([['company_id', '=', 1],['status', '=', 1],['is_deleted', '!=', 1]])
+            ->with('carWithModelTranslation');
+    }
     public static function getYears(){
         $objects = json_decode(RcBooking::selectRaw('YEAR(created_at) as year')->where([
             ['company_id', '=', 1],
@@ -31,4 +38,7 @@ class RcBooking extends Model
         $years = array_column($objects, 'year');
         return $years;
     }
+
+
+
 }

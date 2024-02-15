@@ -65,7 +65,7 @@ function login(ev) {
 
   store.dispatch('login', user).then(() => {
     router.push({
-      name: "Dashboard"
+      name: "Bookings"
     })
   }).catch(err => {
     errorMsg.value = err.response.data.error

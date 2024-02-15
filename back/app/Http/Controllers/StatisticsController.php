@@ -20,7 +20,7 @@ class StatisticsController extends Controller
 
         $year = $request->input()['year'];
         $month = $request->input()['month'];
-        $brand= $request->input()['brand'];
+        $brand = $request->input()['brand'];
 
         $years = $this->getYears();
 
@@ -31,26 +31,19 @@ class StatisticsController extends Controller
         $startMonthDate = $year . '-' . $month . '-01 00:00:00';
         $endMonthDate = $year . '-' . $month . '-' . cal_days_in_month(CAL_GREGORIAN, $month, $year) . ' 23:59:59';
 
-        $whereArr = [
-            ['end_date', '>=', $startMonthDate],
-            ['start_date', '<=', (new DateTime($endMonthDate))->modify('+1 day')->format('Y-m-d') . ' 00:00:00'],
-            ['status', '=', 1]
-        ];
-        if ($brand !== '') $whereArr[] = ['end_date', '>=', $startMonthDate];
-
         $bookings = RcBooking::select('booking_id', 'car_id', 'created_at', 'start_date', 'end_date', 'source')
             ->where([
                 ['end_date', '>=', $startMonthDate],
-                ['start_date', '<=', (new DateTime($endMonthDate))->modify('+1 day')->format('Y-m-d') . ' 00:00:00'],
+                ['start_date', '<', (new DateTime($endMonthDate))->modify('+1 day')->format('Y-m-d') . ' 00:00:00'],
                 ['status', '=', 1]
-            ])->whereHas('car', function ($query) use($brand) {
+            ])->whereHas('car', function ($query) use ($brand) {
                 $query->where('company_id', '=', 1)
                     ->where('status', '=', 1)
                     ->where('is_deleted', '!=', 1)
-                    ->whereHas('model', function ($query) use($brand){
-                        $query->when($brand!='',function($query) use ($brand) {
-                            $query->whereHas('brand', function ($query) use($brand){
-                                $query->where('slug','=',$brand);
+                    ->whereHas('model', function ($query) use ($brand) {
+                        $query->when($brand != '', function ($query) use ($brand) {
+                            $query->whereHas('brand', function ($query) use ($brand) {
+                                $query->where('slug', '=', $brand);
                             });
                         });
                     });
@@ -108,14 +101,20 @@ class StatisticsController extends Controller
 
             //Перевірка на дні які знаходяться в середині періода у 3+ днів
             if (((new DateTime($startPeriod->format('Y-m-d')))->diff(new DateTime($endPeriod->format('Y-m-d'))))->days >= 2 &&
-                ($startPeriod->format('Y-m-d') <= $currentDateStart->format('Y-m-d') && $currentDateStart->format('Y-m-d') <= $endPeriod->format('Y-m-d'))) {
+                ($startPeriod->format('Y-m-d') <= $currentDateStart->format('Y-m-d')
+                    && $currentDateStart->format('Y-m-d') <= $endPeriod->format('Y-m-d'))) {
                 $isService = $period[2] == 'car-service';
-                if ($startPeriod < $currentDateStart && $currentDateEnd < $endPeriod) return $period[2] == 'car-service' ? 'service' : 'busy';
-                else if ($currentDateStart->format('Y-m-d') === $startPeriod->format('Y-m-d')) goto firstDayLogic;
-                else if ($currentDateStart->format('Y-m-d') === $endPeriod->format('Y-m-d')) goto lastDayLogic;
+                if ($startPeriod < $currentDateStart && $currentDateEnd < $endPeriod) {
+                    return $period[2] == 'car-service' ? 'service' : 'busy';
+                } else if ($currentDateStart->format('Y-m-d') === $startPeriod->format('Y-m-d')) {
+                    goto firstDayLogic;
+                } else if ($currentDateStart->format('Y-m-d') === $endPeriod->format('Y-m-d')) {
+                    goto lastDayLogic;
+                }
             } //День який в періоді 2 днів
             else if ($startPeriod->format('Y-m-d') === (new DateTime($endPeriod->format('Y-m-d H:i:s')))->modify('-1 day')->format('Y-m-d')
-                && ($currentDateStart->format('Y-m-d') === $startPeriod->format('Y-m-d') || $currentDateStart->format('Y-m-d') === $endPeriod->format('Y-m-d'))
+                && ($currentDateStart->format('Y-m-d') === $startPeriod->format('Y-m-d')
+                    || $currentDateStart->format('Y-m-d') === $endPeriod->format('Y-m-d'))
             ) {
                 $isService = $period[2] == 'car-service';
                 //Поточний день 1 день періоду
@@ -127,12 +126,13 @@ class StatisticsController extends Controller
                         //Тут нічого 🙃
                     } //9<= day <=18
                     else if ($nineAM <= $startPeriod && $startPeriod <= $ninePM) {
-                        if ($freeTimeEnd >= $startPeriod)
+                        if ($freeTimeEnd >= $startPeriod) {
                             $freeTimeEnd = $startPeriod;
+                        }
                     } //0<= day <=9
-                    else if ($startPeriod <= $nineAM)
+                    else if ($startPeriod <= $nineAM) {
                         return $period[2] == 'car-service' ? 'service' : 'busy';
-
+                    }
                 } //Поточний день 2 день періоду
                 else if ($currentDateStart->format('Y-m-d') === $endPeriod->format('Y-m-d')) {
                     lastDayLogic:
@@ -145,7 +145,6 @@ class StatisticsController extends Controller
                     } //0<= day <=24
                     else if ($endPeriod <= $currentDateEnd)
                         return $period[2] == 'car-service' ? 'service' : 'busy';
-
                 }
 
             } //День який знаходиться в періоді 1 дня
@@ -160,10 +159,17 @@ class StatisticsController extends Controller
                         $freeTimeStart = $endPeriod;
                     else $freeTimeEnd = $startPeriod;
                 } //0<= period <= 21
-                else if ($startPeriod <= $nineAM && $endPeriod <= $ninePM) $freeTimeStart = $endPeriod;
+                else if ($startPeriod <= $nineAM && $endPeriod <= $ninePM) {
+                    $freeTimeStart = $endPeriod;
+                }
                 //9<= period <= 24
-                else if ($nineAM <= $startPeriod && $ninePM <= $endPeriod) $freeTimeEnd = $startPeriod;
-                else return $period[2] == 'car-service' ? 'service' : 'busy';
+                else if ($nineAM <= $startPeriod && $ninePM <= $endPeriod) {
+                    $freeTimeEnd = $startPeriod;
+                }
+                //0<= period <= 24
+                else {
+                    return $period[2] == 'car-service' ? 'service' : 'busy';
+                }
 
             }
 
@@ -171,7 +177,6 @@ class StatisticsController extends Controller
         return $freeTimeEnd->getTimestamp() - $freeTimeStart->getTimestamp() < 9 * 3600 ?
             $isService ? 'service' : 'busy'
             : 'free';
-//        return 'free';
     }
 
     function calculateAvailability($schedule, $startDate, $endDate)
@@ -187,8 +192,9 @@ class StatisticsController extends Controller
             $currentDate = (new DateTime($startDate))->modify("+" . $day - 1 . "day")->format('Y-m-d H:i:s');
             if (isset($schedule[0])) {
                 //Для скорочення обрахунків видаляємо непотрібні періоди
-                if ($schedule[0][1] < $currentDate)
+                if ($schedule[0][1] < $currentDate) {
                     array_shift($schedule);
+                }
                 $daysArr[$day] = $this->isCarFree($currentDate, $schedule);
             }
         }
@@ -196,9 +202,15 @@ class StatisticsController extends Controller
         $resultData = ['free' => 0, 'service' => 0, 'busy' => 0, 'days' => 0];
 
         foreach ($daysArr as $day) {
-            if ($day === 'free') $resultData['free'] += 1;
-            else if ($day === 'busy') $resultData['busy'] += 1;
-            else if ($day === 'service') $resultData['service'] += 1;
+            if ($day === 'free') {
+                $resultData['free'] += 1;
+            }
+            if ($day === 'busy') {
+                $resultData['busy'] += 1;
+            }
+            if ($day === 'service') {
+                $resultData['service'] += 1;
+            }
         }
         return $resultData;
     }

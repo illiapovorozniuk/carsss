@@ -148,7 +148,7 @@ function logout() {
 const user = computed(() => store.state.user.data)
 
 const navigation = [
-  {name: 'Dashboard', to: {name: 'Dashboard'}, current: false},
+  {name: 'Bookings', to: {name: 'Bookings'}, current: false},
   {name: 'Rent', to: {name: 'Rent'}, current: false},
 
 ]
